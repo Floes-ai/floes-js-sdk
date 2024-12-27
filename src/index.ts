@@ -43,3 +43,5 @@ export class FloesSDK {
     this.listeners = this.listeners.filter(listener => listener.event !== event || listener.callback !== callback);
   }
 }
+
+(window as any).FloesSDK = FloesSDK;
