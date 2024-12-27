@@ -14,8 +14,6 @@ export class Builder {
   }
 
   private init(): void {
-    console.log('Builder init', this.embed);
-
     this.buildStyling();
 
     this.buildOpenChatButton();

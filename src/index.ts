@@ -43,11 +43,3 @@ export class FloesSDK {
     this.listeners = this.listeners.filter(listener => listener.event !== event || listener.callback !== callback);
   }
 }
-
-
-// This is just for testings
-const floesSDK = new FloesSDK('09607078-e5cc-4a9f-93cf-7988625cb24f');
-
-floesSDK.addListener('chatOpened', () => {
-  console.log('Chat opened');
-});
