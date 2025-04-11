@@ -87,7 +87,7 @@ export class Builder {
 
     const iframe = document.createElement('iframe');
 
-    iframe.src = `${config.embedLocation}embed/?token=${this.embed.embedToken}`;
+    iframe.src = `${config.embedLocation}embed/?token=${this.floesSDK.embedToken}`;
     iframe.classList.add('floes-chat-overlay__iframe');
     iframe.addEventListener('load', () => {
       this.iframeLoaded = true;
