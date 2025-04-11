@@ -7,7 +7,7 @@ export class FloesSDK {
   private listeners: {event: string, callback: () => void}[] = [];
 
   constructor(
-    private readonly embedToken: string,
+    public readonly embedToken: string,
   ) {
     this.init();
   }
