@@ -24,22 +24,26 @@ export class Builder {
   }
 
   private bindEvents(): void {
-    document.querySelector('[data-floes-open-chat]')?.addEventListener('click', (event) => {
-      event.preventDefault();
+    [...document.querySelectorAll('[data-floes-open-chat]')].forEach((button) => {
+      button?.addEventListener('click', (event) => {
+        event.preventDefault();
 
-      document.querySelector('[data-floes-chat-overlay]')?.classList.add('floes-chat-overlay--open');
+        document.querySelector('[data-floes-chat-overlay]')?.classList.add('floes-chat-overlay--open');
 
-      this.buildIframe();
+        this.buildIframe();
 
-      this.floesSDK.emit('chatOpened');
+        this.floesSDK.emit('chatOpened');
+      });
     });
 
-    document.querySelector('[data-floes-close-chat]')?.addEventListener('click', (event) => {
-      event.preventDefault();
+    [...document.querySelectorAll('[data-floes-close-chat]')].forEach((button) => {
+      button?.addEventListener('click', (event) => {
+        event.preventDefault();
 
-      document.querySelector('[data-floes-chat-overlay]')?.classList.remove('floes-chat-overlay--open');
+        document.querySelector('[data-floes-chat-overlay]')?.classList.remove('floes-chat-overlay--open');
 
-      this.floesSDK.emit('chatClosed');
+        this.floesSDK.emit('chatClosed');
+      });
     });
   }
 
