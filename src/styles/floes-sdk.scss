@@ -178,3 +178,31 @@
   --floes-overlay-border-radius: 20px;
   --floes-overlay-box-shadow: #{rgba(0, 0, 0, 0.4) 0px 16px 48px -12px};
 }
+
+// NOM (ontwerp 2025) -- the shell that matches the NOM chat inside the iframe.
+// This preset carries its own palette rather than deriving from the assistant's
+// brand colour, so the launcher reads as mint-on-ink like the chat's call to
+// action, with the same soft halo.
+.floes-chat-button.floes-style-nom {
+  .floes-chat-button__open {
+    background-color: #00d083;
+    box-shadow:
+      0 0 0 6px rgba(0, 208, 131, 0.22),
+      0 8px 22px -6px rgba(0, 208, 131, 0.5);
+
+    &::after {
+      background: #0e1e14;
+    }
+  }
+}
+
+.floes-chat-overlay.floes-style-nom {
+  --floes-overlay-border-radius: 12px;
+  --floes-overlay-box-shadow: #{rgba(0, 0, 0, 0.05) 0px 0px 10px 0px, rgba(0, 0, 0, 0.12) 0px 12px 32px -12px};
+
+  // The chat's own dark header sits behind this button, so the glyph has to be
+  // light here -- the shared rule paints it with the assistant's text colour.
+  .floes-chat-overlay__close::after {
+    background: #fff;
+  }
+}
