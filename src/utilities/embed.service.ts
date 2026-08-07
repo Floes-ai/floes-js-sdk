@@ -28,6 +28,7 @@ export class EmbedService {
         bodyColor: payload.assistant.body_color,
         textColor: payload.assistant.text_color,
         appearanceType: payload.assistant.appearance_type,
+        styleVersion: payload.assistant.style_version,
       },
     };
   }

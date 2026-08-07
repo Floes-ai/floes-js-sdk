@@ -6,4 +6,5 @@ export interface Assistant {
   bodyColor: string;
   textColor: string;
   appearanceType: string;
+  styleVersion?: string;
 }

@@ -124,3 +124,57 @@
     border: none;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Style versions
+//
+// The chat inside the iframe is styled by the web app; these rules cover the
+// two pieces that live on the customer's own page -- the launcher and the
+// overlay that frames the iframe -- so a visitor sees one look rather than a
+// styled chat inside an unstyled shell.
+//
+// Like the chat's own presets, these derive from the assistant's brand colour
+// (--floes-background-color) instead of introducing a palette, with a flat
+// fallback ahead of every color-mix() for older browsers.
+//
+// `classic` adds no class, so existing embeds are untouched.
+// ---------------------------------------------------------------------------
+
+// Minimal -- a quieter launcher that sits on the page rather than shouting at
+// it, and a tighter overlay shadow.
+.floes-chat-button.floes-style-minimal {
+  .floes-chat-button__open {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 8px 20px -8px rgba(0, 0, 0, 0.24);
+  }
+}
+
+.floes-chat-overlay.floes-style-minimal {
+  --floes-overlay-border-radius: 12px;
+  --floes-overlay-box-shadow: #{rgba(0, 0, 0, 0.16) 0px 8px 32px -8px};
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+// Bold -- a larger launcher carrying the same gradient as the chat header, and
+// a deeper, rounder overlay.
+.floes-chat-button.floes-style-bold {
+  --floes-chat-button-size: 64px;
+  --floes-chat-button-icon-size: 30px;
+
+  .floes-chat-button__open {
+    background-color: var(--floes-background-color);
+    background-image: linear-gradient(
+      135deg,
+      var(--floes-background-color),
+      color-mix(in srgb, var(--floes-background-color) 68%, #000)
+    );
+    box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.42);
+  }
+}
+
+.floes-chat-overlay.floes-style-bold {
+  --floes-overlay-border-radius: 20px;
+  --floes-overlay-box-shadow: #{rgba(0, 0, 0, 0.4) 0px 16px 48px -12px};
+}

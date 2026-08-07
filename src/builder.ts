@@ -3,8 +3,13 @@ import { config } from "./config";
 import { Embed } from "./interfaces/embed";
 import "./styles/floes-sdk.scss";
 
+/** Only ever post into the iframe that we created, at the origin we created it at. */
+const EMBED_ORIGIN = new URL(config.embedLocation).origin;
+
 export class Builder {
   private iframeLoaded = false;
+  private iframe?: HTMLIFrameElement;
+  private embedReady = false;
 
   constructor(
     private readonly floesSDK: FloesSDK,
@@ -21,6 +26,8 @@ export class Builder {
     this.buildChatOverlay();
 
     this.bindEvents();
+
+    this.watchNavigation();
   }
 
   private bindEvents(): void {
@@ -45,6 +52,56 @@ export class Builder {
         this.floesSDK.emit('chatClosed');
       });
     });
+
+    // The chat announces itself once it can receive context. Until then any
+    // context we post would land before its listener is attached.
+    window.addEventListener('message', (event: MessageEvent) => {
+      if (event.origin !== EMBED_ORIGIN) {
+        return;
+      }
+      if (event.source !== this.iframe?.contentWindow) {
+        return;
+      }
+      if (event.data?.type !== 'floes:ready') {
+        return;
+      }
+      this.embedReady = true;
+      this.sendContext();
+    });
+  }
+
+  /**
+   * Keep context current on sites that navigate without a full page load.
+   * pushState and replaceState fire no event of their own, so they are wrapped.
+   */
+  private watchNavigation(): void {
+    const notify = () => this.sendContext();
+
+    window.addEventListener('popstate', notify);
+
+    (['pushState', 'replaceState'] as const).forEach((method) => {
+      const original = history[method];
+      history[method] = function (this: History, ...args: any[]) {
+        const result = original.apply(this, args as any);
+        notify();
+        return result;
+      } as typeof original;
+    });
+  }
+
+  /** Post the current page context into the chat. No-op until the chat is ready. */
+  public sendContext(): void {
+    if (!this.embedReady || !this.iframe?.contentWindow) {
+      return;
+    }
+
+    this.iframe.contentWindow.postMessage(
+      {
+        type: 'floes:context',
+        context: this.floesSDK.getContext(),
+      },
+      EMBED_ORIGIN
+    );
   }
 
   private buildStyling(): void {
@@ -60,9 +117,16 @@ export class Builder {
     );
   }
 
+  /** `bold` / `minimal` -> a class the stylesheet keys off. `classic` adds nothing. */
+  private styleClass(): string {
+    const style = this.embed.assistant.styleVersion;
+
+    return style && style !== 'classic' ? ` floes-style-${style}` : '';
+  }
+
   private buildOpenChatButton(): void {
     const template = `
-      <div class="floes-chat-button">
+      <div class="floes-chat-button${this.styleClass()}">
         <button class="floes-chat-button__open" type="button" aria-label="Open chat" data-floes-open-chat="">
         </button>
       </div>
@@ -73,7 +137,7 @@ export class Builder {
 
   private buildChatOverlay(): void {
     const template = `
-      <div class="floes-chat-overlay" data-floes-chat-overlay="">
+      <div class="floes-chat-overlay${this.styleClass()}" data-floes-chat-overlay="">
         <button class="floes-chat-overlay__close" type="button" aria-label="Close chat" data-floes-close-chat=""></button>
 
         <div class="floes-chat-overlay__chat" data-floes-chat-container="">
@@ -96,6 +160,8 @@ export class Builder {
     iframe.addEventListener('load', () => {
       this.iframeLoaded = true;
     });
+
+    this.iframe = iframe;
 
     document.querySelector('[data-floes-chat-container]')?.appendChild(iframe);
   }
