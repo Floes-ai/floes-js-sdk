@@ -1,6 +1,7 @@
 import { Builder } from "./builder";
 import { Embed } from "./interfaces/embed";
 import { EmbedService } from "./utilities/embed.service";
+import { EmbedSettings } from "./interfaces/embed-settings";
 import { FloesContext, collectPageContext } from "./utilities/page-context";
 
 export class FloesSDK {
@@ -9,8 +10,15 @@ export class FloesSDK {
   private listeners: {event: string, callback: () => void}[] = [];
   private customContext: FloesContext = {};
 
+  /**
+   * @param embedToken the access token of the embed to load.
+   * @param settings per-page overrides for the chat -- opening line, quick
+   * actions, button labels. Read once when the chat is first opened, so set
+   * them here rather than after the visitor has started reading.
+   */
   constructor(
     public readonly embedToken: string,
+    public readonly settings?: EmbedSettings,
   ) {
     this.init();
   }

@@ -1,6 +1,7 @@
 import { FloesSDK } from ".";
 import { config } from "./config";
 import { Embed } from "./interfaces/embed";
+import { encodeEmbedSettings } from "./utilities/embed-settings";
 import "./styles/floes-sdk.scss";
 
 /** Only ever post into the iframe that we created, at the origin we created it at. */
@@ -149,13 +150,20 @@ export class Builder {
   }
 
   private buildIframe(): void {
-    if (this.iframeLoaded) {
+    // Guard on the iframe itself, not on its load event: on a slow connection
+    // a visitor clicks the button again before the first frame has loaded, and
+    // guarding on `iframeLoaded` would stack a second chat on top of the first.
+    if (this.iframe) {
       return;
     }
 
     const iframe = document.createElement('iframe');
 
-    iframe.src = `${config.embedLocation}embed/?token=${this.floesSDK.embedToken}`;
+    const settings = encodeEmbedSettings(this.floesSDK.settings);
+
+    iframe.src =
+      `${config.embedLocation}embed/?token=${encodeURIComponent(this.floesSDK.embedToken)}` +
+      (settings ? `&settings=${settings}` : '');
     iframe.classList.add('floes-chat-overlay__iframe');
     iframe.addEventListener('load', () => {
       this.iframeLoaded = true;
