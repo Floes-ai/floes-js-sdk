@@ -38,7 +38,17 @@ const settings = btoa(JSON.stringify({ welcomeMessage: "Hi there" }))
 <iframe src="https://app.floes.ai/embed/?token=TOKEN&settings=eyJ3ZWxjb21lTWVzc2FnZSI6IkhpIHRoZXJlIn0"></iframe>
 ```
 
-These settings come from the page, not from your Floes account, so treat them
-as presentation only: they change what the widget says, never what the
-assistant is allowed to do. Text that is too long is truncated and malformed
-values fall back to the assistant's own settings.
+### What these settings can and cannot do
+
+They come from the page, not from your Floes account. Text that is too long is
+truncated and malformed values fall back to the assistant's own settings.
+
+They are not purely cosmetic, though. `defaultMessage` and a quick action's
+`message` are sent to the assistant as a visitor turn when the start button or
+a chip is clicked, so they reach the API and count against the account's
+message quota. They never change the assistant's instructions or what it is
+allowed to do.
+
+Settings are read once, when the chat is first opened. On a single-page app
+that means a visitor who opens the chat, closes it and navigates elsewhere
+still sees the settings from the page they started on.

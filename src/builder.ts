@@ -150,7 +150,10 @@ export class Builder {
   }
 
   private buildIframe(): void {
-    if (this.iframeLoaded) {
+    // Guard on the iframe itself, not on its load event: on a slow connection
+    // a visitor clicks the button again before the first frame has loaded, and
+    // guarding on `iframeLoaded` would stack a second chat on top of the first.
+    if (this.iframe) {
       return;
     }
 

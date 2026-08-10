@@ -26,8 +26,6 @@ export function encodeEmbedSettings(settings?: EmbedSettings | null): string | n
   const bytes = new TextEncoder().encode(json);
   let binary = '';
 
-  // Chunked rather than spread: a long settings blob would blow the argument
-  // limit of String.fromCharCode.
   for (let index = 0; index < bytes.length; index++) {
     binary += String.fromCharCode(bytes[index]);
   }
